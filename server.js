@@ -23,14 +23,14 @@ app.use(bodyParser.json());
 
 
 //mongodb connect
-const URL = process.env.MONGODB_URL;
+const uri = process.env.MONGODB_URL;
 
-mongoose.connect(URL, {
+mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
 
-mongoose.connect(URL)
+mongoose.connect(uri)
 .then(()=>{
     console.log("Connected to the Mongodb...")
 }).catch((err)=>{
