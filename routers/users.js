@@ -4,9 +4,11 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require('cookie-parser');
 const router = express.Router();
 const User = require('../models/userModel')
+var cors = require('cors')
 
 router.use(express.json());
 router.use(cookieParser());
+router.use(cors());
 
 const secretKey = "my_secret_key";
 
