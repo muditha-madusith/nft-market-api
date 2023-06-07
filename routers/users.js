@@ -79,7 +79,7 @@ router.route('/login').post((req, res) => {
     const password = req.body.password;
 
     // Find user by email
-    User.findOne({ email }).then(user => {
+    User.findOne( {email} ).then(user => {
         // Check if user exists
         if (!user) {
             return res.status(404).json("Email not found");
@@ -99,7 +99,7 @@ router.route('/login').post((req, res) => {
                     payload,
                     secretKey,
                     {
-                        expiresIn: 604800  // 3 months in seconds
+                        expiresIn: 7890000  // 3 months in seconds
                     },
                     (err, token) => {
                         if (err) throw err;
