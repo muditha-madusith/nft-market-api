@@ -100,7 +100,7 @@ router.route('/login').post((req, res) => {
                     payload,
                     secretKey,
                     {
-                        expiresIn: 3600  // 3 months in seconds, 1 week in seconds 604800, 
+                        expiresIn: 7890000  // 3 months in seconds, 1 week in seconds 604800, 
                     },
                     (err, token) => {
                         if (err) throw err;
@@ -131,13 +131,18 @@ router.route('/profile').get((req, res) => {
     // Verify the token
     jwt.verify(token, secretKey, {}, (err, decoded) => {
         if (err) {
+            if (err.name === "TokenExpiredError") {
+                res.clearCookie('token');
+                return res.status(401).json({ message: "Token expired" });
+            }
             return res.status(401).json({ message: "Invalid token" });
         }
 
         // Token is valid, send user details and token in the response
         const userDetails = {
             id: decoded.id,
-            name: decoded.name
+            name: decoded.name,
+            exp: decoded.exp
         };
 
         res.json({
