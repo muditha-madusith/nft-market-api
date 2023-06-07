@@ -99,7 +99,7 @@ router.route('/login').post((req, res) => {
                     payload,
                     secretKey,
                     {
-                        expiresIn: 7890000  // 3 months in seconds
+                        expiresIn: 3600  // 3 months in seconds, 1 week in seconds 604800, 
                     },
                     (err, token) => {
                         if (err) throw err;
