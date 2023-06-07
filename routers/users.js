@@ -18,6 +18,7 @@ const validateLoginInput = require("../validators/login");
 
 
 
+
 router.route('/register').post((req, res) => {
     // Form validation
     const { errors, isValid } = validateRegisterInput(req.body);
@@ -91,7 +92,7 @@ router.route('/login').post((req, res) => {
                 // User matched, create JWT Payload
                 const payload = {
                     id: user.id,
-                    name: user.name
+                    name: user.username
                 };
 
                 // Sign token with secret key and set expiration time
@@ -105,7 +106,8 @@ router.route('/login').post((req, res) => {
                         if (err) throw err;
                         res.cookie('token', token).json({
                             id: user.id,
-                            username: user.username
+                            username: user.username,
+                            token
                         });
                     }
                 );
@@ -121,11 +123,27 @@ router.route('/login').post((req, res) => {
 
 router.route('/profile').get((req, res) => {
     const {token} = req.cookies;
-    jwt.verify(token, secretKey, {}, (err, info) => {
+    // Check if token exists
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Verify the token
+    jwt.verify(token, secretKey, {}, (err, decoded) => {
         if (err) {
-          return res.status(401).json('Invalid or expired token');
+            return res.status(401).json({ message: "Invalid token" });
         }
-        res.json(info);
+
+        // Token is valid, send user details and token in the response
+        const userDetails = {
+            id: decoded.id,
+            name: decoded.name
+        };
+
+        res.json({
+            user: userDetails,
+            token: token
+        });
     });
 });
 
