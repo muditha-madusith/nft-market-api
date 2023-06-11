@@ -17,8 +17,6 @@ const validateRegisterInput = require("../validators/register");
 const validateLoginInput = require("../validators/login");
 
 
-
-
 router.route('/register').post((req, res) => {
     // Form validation
     const { errors, isValid } = validateRegisterInput(req.body);
@@ -155,6 +153,20 @@ router.route('/profile').get((req, res) => {
 
 router.route('/logout').post((req, res) => {
     res.clearCookie('token').json('You are logged out.');
+});
+
+
+router.route('/users').get((req, res) => {
+    // Find all users in the database
+    User.find({})
+        .then(users => {
+            // Return the user details
+            res.json(users);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: "Internal server error" });
+        });
 });
 
 
