@@ -30,6 +30,7 @@ router.route('/register').post((req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const password2 = req.body.password2;
+    const profileUrl = req.body.profileUrl;
 
     // Find user with email provided
     User.findOne({ email }).then(user => {
@@ -42,7 +43,8 @@ router.route('/register').post((req, res) => {
             const newUser = new User({
                 username,
                 email,
-                password
+                password,
+                profileUrl
             });
 
             // Hash password before saving in database
