@@ -124,7 +124,15 @@ router.route('/login').post((req, res) => {
 
 
 router.route('/profile').get((req, res) => {
-    const {token} = req.cookies;
+    let token;
+
+    // Check if token exists in the Authorization header or req.cookies
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    }
+
     // Check if token exists
     if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -144,7 +152,7 @@ router.route('/profile').get((req, res) => {
         const userDetails = {
             id: decoded.id,
             name: decoded.name,
-            exp: decoded.exp
+            exp: decoded.exp,
         };
 
         res.json({
@@ -172,6 +180,7 @@ router.route('/users').get((req, res) => {
             res.status(500).json({ error: "Internal server error" });
         });
 });
+
 
 router.route('/users/:id').get((req, res) => {
     const userId = req.params.id;
