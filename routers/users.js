@@ -4,13 +4,15 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require('cookie-parser');
 const router = express.Router();
 const User = require('../models/userModel')
-var cors = require('cors')
+var cors = require('cors');
+const dotenv = require("dotenv");
+dotenv.config();
 
 router.use(express.json());
 router.use(cookieParser());
 router.use(cors());
 
-const secretKey = "my_secret_key";
+const secretKey = process.env.SECRET_KEY;
 
 // Load input validation
 const validateRegisterInput = require("../validators/register");

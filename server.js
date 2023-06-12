@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 const user = require('./routers/users.js')
-// const nft = require('./routers/nfts.js')
+const nft = require('./routers/nfts.js')
 const  mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -10,12 +11,15 @@ dotenv.config();
 
 const app = express();
 
+app.use(cookieParser());
+app.use(express.json());
+
 const PORT = process.env.PORT || 8000;
 
 
 app.use('/api/user',user);
 
-// app.use('/api/nft',nft);
+app.use('/api/nft',nft);
 
 
 app.use(cors());

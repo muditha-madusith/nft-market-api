@@ -17,6 +17,14 @@ const nftSchema = mongoose.Schema(
         image: {
             type: String,
             required: [true, "Please upload your NFT url"]
+        },
+        creator: {
+            type: String,
+            required: [true, "Please login before create the NFT"]
+        },
+        quantity: {
+            type: Number,
+            required: [true, "Please add quantity"]
         }
     },
 )

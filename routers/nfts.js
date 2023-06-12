@@ -1,29 +1,40 @@
 const express = require('express');
 const router = express.Router();
-let Nft = require("../models/nftModel");
+const Nft = require('../models/nftModel');
+const authMiddleware = require('../middleware/authMiddleware');
+var cors = require('cors');
 
-router.use(express.json());
 
-router.route("/create").post((req,res)=>{
+router.use(cors());
 
-    const name = req.body.name;
-    const price = req.body.price;
-    const description = req.body.description;
-    const image = req.body.image;
+// Create NFT
+router.route('/create').post(authMiddleware, (req, res) => {
+  // Retrieve the logged-in user ID from the request
+  const userId = req.user.id;
 
-    const newNft = new Nft({
-        name,
-        price,
-        description,
-        image
+  // Extract the NFT data from the request body
+  const { name, price, description, image, quantity } = req.body;
+
+  // Create a new NFT with the user ID
+  const newNft = new Nft({
+    name,
+    price,
+    description,
+    image,
+    quantity,
+    creator: userId
+  });
+
+  // Save the new NFT to the database
+  newNft
+    .save()
+    .then(nft => {
+      res.json(nft);
     })
-
-    newNft.save().then(()=>{
-        res.send("NFT Added....")
-    }).catch((err)=>{
-        console.log(err);
-    })
-
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ error: 'Failed to create NFT' });
+    });
 });
 
 
