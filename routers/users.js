@@ -44,7 +44,7 @@ router.route('/register').post((req, res) => {
                 username,
                 email,
                 password,
-                profileUrl
+                profileUrl,
             });
 
             // Hash password before saving in database
@@ -164,6 +164,31 @@ router.route('/users').get((req, res) => {
         .then(users => {
             // Return the user details
             res.json(users);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: "Internal server error" });
+        });
+});
+
+router.route('/users/:id').get((req, res) => {
+    const userId = req.params.id;
+
+    // Check if userId is defined
+    if (!userId) {
+        return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    // Find user by ID in the database
+    User.findById(userId)
+        .then(user => {
+            if (!user) {
+                // If user is not found, return error response
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            // Return the user details
+            res.json(user);
         })
         .catch(err => {
             console.log(err);
