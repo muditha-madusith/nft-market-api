@@ -27,6 +27,9 @@ const nftSchema = mongoose.Schema(
             required: [true, "Please add quantity"]
         }
     },
+    {
+        versionKey: false
+    }
 )
 
 
