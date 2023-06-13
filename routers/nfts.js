@@ -55,6 +55,7 @@ router.route('/create').post(authMiddleware, (req, res) => {
 // });
 
 
+
 // Get NFTs created by the logged-in user
 router.route('/my-nfts').get((req, res) => {
   // Retrieve the logged-in user ID from the request
@@ -80,6 +81,49 @@ router.route('/my-nfts').get((req, res) => {
       res.status(500).json({ error: 'Failed to retrieve NFTs' });
     });
 });
+
+
+// Get all NFTs
+router.route('/all-nfts').get((req, res) => {
+  // Retrieve all NFTs from the database
+  Nft.find()
+    .then(nfts => {
+      res.json(nfts);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ error: 'Failed to retrieve NFTs' });
+    });
+});
+
+
+
+// Get NFT details by ID
+router.route('/nfts/:id').get((req, res) => {
+  // Retrieve the NFT ID from the request parameter or headers
+  let nftId;
+
+  // Check if id exists in the Authorization header or req.cookies
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+    nftId = req.headers.authorization.split(' ')[1];
+  }else{
+    nftId = req.params.id;
+  }
+
+  // Find the NFT by its ID in the database
+  Nft.findById(nftId)
+    .then(nft => {
+      if (!nft) {
+        return res.status(404).json({ error: 'NFT not found' });
+      }
+      res.json(nft);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ error: 'Failed to retrieve NFT' });
+    });
+});
+
 
 
 module.exports = router;
