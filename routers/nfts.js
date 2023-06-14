@@ -98,7 +98,7 @@ router.route('/all-nfts').get((req, res) => {
 
 
 
-// Get NFT details by ID
+// Get NFT details by NftID
 router.route('/nfts/:id').get((req, res) => {
   // Retrieve the NFT ID from the request parameter or headers
   let nftId;
@@ -123,6 +123,23 @@ router.route('/nfts/:id').get((req, res) => {
       res.status(500).json({ error: 'Failed to retrieve NFT' });
     });
 });
+
+
+// Get NFTs created by a specific user
+router.route('/nfts/creator/:id').get((req, res) => {
+  const creatorId = req.params.id;
+
+  // Find all NFTs with the creator field matching the specified user's ID
+  Nft.find({ creator: creatorId })
+    .then(nfts => {
+      res.json(nfts);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ error: 'Failed to retrieve NFTs by creator ID' });
+    });
+});
+
 
 
 
