@@ -38,24 +38,6 @@ router.route('/create').post(authMiddleware, (req, res) => {
 });
 
 
-// // Get NFTs created by the logged-in user
-// router.route('/my-nfts').get(authMiddleware, (req, res) => {
-//   // Retrieve the logged-in user ID from the request
-//   const userId = req.user.id;
-
-//   // Find all NFTs with the creator field matching the user's ID
-//   Nft.find({ creator: userId })
-//     .then(nfts => {
-//       res.json(nfts);
-//     })
-//     .catch(err => {
-//       console.log(err);
-//       res.status(500).json({ error: 'Failed to retrieve NFTs' });
-//     });
-// });
-
-
-
 // Get NFTs created by the logged-in user
 router.route('/my-nfts').get((req, res) => {
   // Retrieve the logged-in user ID from the request
@@ -71,7 +53,6 @@ router.route('/my-nfts').get((req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
   }
 
-  // Find all NFTs with the creator field matching the user's ID
   Nft.find({ creator: userId })
     .then(nfts => {
       res.json(nfts);
@@ -100,15 +81,8 @@ router.route('/all-nfts').get((req, res) => {
 
 // Get NFT details by NftID
 router.route('/nfts/:id').get((req, res) => {
-  // Retrieve the NFT ID from the request parameter or headers
-  let nftId;
 
-  // Check if id exists in the Authorization header or req.cookies
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
-    nftId = req.headers.authorization.split(' ')[1];
-  }else{
-    nftId = req.params.id;
-  }
+  const nftId = req.params.id;
 
   // Find the NFT by its ID in the database
   Nft.findById(nftId)
