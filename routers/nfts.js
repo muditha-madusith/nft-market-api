@@ -115,5 +115,21 @@ router.route('/nfts/creator/:id').get((req, res) => {
 });
 
 
+// Get NFTs by name letters
+router.route('/nfts/by-name/:letters').get((req, res) => {
+  const letters = req.params.letters;
+
+  // Find NFTs whose name contains the specified letters
+  Nft.find({ name: { $regex: letters, $options: 'i' } })
+    .then(nfts => {
+      res.json(nfts);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ error: 'Failed to retrieve NFTs by name letters' });
+    });
+});
+
+
 
 module.exports = router;
