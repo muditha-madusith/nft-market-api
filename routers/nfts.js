@@ -47,7 +47,7 @@ router.route('/buy/:id').post(authMiddleware, async (req, res) => {
 
     // Create a new payment intent with Stripe
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: totalPrice * 100, // Stripe requires the amount in cents
+      amount: totalPrice,
       currency: 'usd',
       metadata: {
         nftId,
