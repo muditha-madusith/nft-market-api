@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Nft = require('../models/nftModel');
+const Seller = require('../models/sellerModel')
 const authMiddleware = require('../middleware/authMiddleware');
 var cors = require('cors');
 
@@ -36,6 +37,7 @@ router.route('/create').post(authMiddleware, (req, res) => {
       res.status(500).json({ error: 'Failed to create NFT' });
     });
 });
+
 
 
 // Get NFTs created by the logged-in user

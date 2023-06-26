@@ -6,6 +6,7 @@ const nft = require('./routers/nfts.js')
 const  mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const seller = require('./routers/sellers.js')
 dotenv.config();
 
 
@@ -20,6 +21,8 @@ const PORT = process.env.PORT || 8000;
 app.use('/api/user',user);
 
 app.use('/api/nft',nft);
+
+app.use('/api/seller', seller);
 
 
 app.use(cors());
