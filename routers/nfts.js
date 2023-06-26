@@ -8,6 +8,104 @@ var cors = require('cors');
 
 router.use(cors());
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Import the Stripe library
+const { Payment } = require('../models/paymentModel'); // Import the Payment model
+
+// Buy NFT
+router.route('/buy/:id').post(authMiddleware, async (req, res) => {
+
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    res.status(405).end('Method Not Allowed');
+    return;
+  }
+
+  try {
+    // Retrieve the logged-in user ID from the request
+    const userId = req.user.id;
+
+    // const userId = req.headers.authorization;
+
+    // Retrieve the NFT ID from the request parameters
+    const nftId = req.params.id;
+
+    // Find the NFT by its ID in the database
+    const nft = await Nft.findById(nftId);
+
+    // Check if the NFT exists
+    if (!nft) {
+      return res.status(404).json({ error: 'NFT not found' });
+    }
+
+    // Check if the NFT quantity is greater than 0
+    if (nft.quantity <= 0) {
+      return res.status(400).json({ error: 'NFT is out of stock' });
+    }
+
+    // Calculate the total price for the NFT
+    const totalPrice = nft.price;
+
+    // Create a new payment intent with Stripe
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalPrice * 100, // Stripe requires the amount in cents
+      currency: 'usd',
+      metadata: {
+        nftId,
+        userId,
+      },
+    });
+
+    // Create a new payment record in the database
+    const payment = new Payment({
+      nft: nftId,
+      buyer: userId,
+      amount: totalPrice,
+      paymentIntentId: paymentIntent.id,
+    });
+
+    // Save the payment record to the database
+    await payment.save();
+
+    // Decrement the NFT quantity by 1
+    nft.quantity -= 1;
+    await nft.save();
+
+    // Return the client secret and payment intent ID to the client
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: 'Failed to buy NFT' });
+  }
+});
+
+
+// Get NFTs bought by the logged-in user
+router.route('/my-bought-nfts/:id').get(async (req, res) => {
+  try {
+    // Retrieve the logged-in user ID from the request
+    const userId = req.params.id;
+
+    // Find all payments made by the user in the database
+    const payments = await Payment.find({ buyer: userId });
+
+    // Extract the NFT IDs from the payments
+    const nftIds = payments.map(payment => payment.nft);
+
+    // Find the NFTs with the extracted IDs in the database
+    const nfts = await Nft.find({ _id: { $in: nftIds } });
+
+    res.json(nfts);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: 'Failed to retrieve bought NFTs' });
+  }
+});
+
+
+
 // Create NFT
 router.route('/create').post(authMiddleware, (req, res) => {
   // Retrieve the logged-in user ID from the request

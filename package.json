@@ -22,6 +22,7 @@
     "nodemon": "^2.0.22",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
+    "stripe": "^12.10.0",
     "validator": "^13.9.0"
   }
 }
