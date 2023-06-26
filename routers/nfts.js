@@ -12,7 +12,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Import the S
 const { Payment } = require('../models/paymentModel'); // Import the Payment model
 
 // Buy NFT
-router.route('/buy/:id').post(authMiddleware, async (req, res) => {
+router.route('/buy/:id').post(async (req, res) => {
 
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -22,9 +22,9 @@ router.route('/buy/:id').post(authMiddleware, async (req, res) => {
 
   try {
     // Retrieve the logged-in user ID from the request
-    const userId = req.user.id;
+    // const userId = req.user.id;
 
-    // const userId = req.headers.authorization;
+    const userId = req.headers.authorization;
 
     // Retrieve the NFT ID from the request parameters
     const nftId = req.params.id;
