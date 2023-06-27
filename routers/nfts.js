@@ -46,8 +46,7 @@ router.route('/buy/:id').post(async (req, res) => {
     // Calculate the total price for the NFT
     const totalPrice = nft.price;
 
-    // console.log(userId)
-    console.log(typeof(buyer))
+    // console.log(typeof(buyer))
 
     // Create a new payment intent with Stripe
     const paymentIntent = await stripe.paymentIntents.create({
