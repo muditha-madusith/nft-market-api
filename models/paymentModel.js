@@ -3,13 +3,11 @@ const mongoose = require('mongoose');
 // Define the Payment schema
 const paymentSchema = new mongoose.Schema({
   nft: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Nft',
+    type: String,
     required: true,
   },
   buyer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    type: String,
     required: true,
   },
   amount: {
